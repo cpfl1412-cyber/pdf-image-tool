@@ -63,7 +63,7 @@ body{
 /* ---------- header ---------- */
 
 .app-header{
-  padding:calc(env(safe-area-inset-top) + 18px) 18px 14px;
+  padding:calc(env(safe-area-inset-top) + 14px) 16px 12px;
   background:linear-gradient(180deg, #1a56db 0%, #1442a8 100%);
   color:#fff;
 }
@@ -78,7 +78,7 @@ body{
 
 .privacy-note{
   display:flex;gap:8px;align-items:flex-start;
-  margin:14px 0 0;padding:10px 12px;
+  margin:12px 0 0;padding:9px 11px;
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.22);
   border-radius:var(--radius-sm);
@@ -320,13 +320,8 @@ main{flex:1;padding:14px 14px 8px;max-width:720px;width:100%;margin:0 auto}
 
 .action-bar{
   display:flex;flex-direction:column;gap:10px;
-  padding:14px 0 calc(10px + env(safe-area-inset-bottom));
-  position:sticky;bottom:0;
-  background:linear-gradient(180deg, rgba(244,246,251,0) 0%, var(--bg) 26%);
-  margin-top:auto;
-}
-@media (prefers-color-scheme: dark){
-  .action-bar{background:linear-gradient(180deg, rgba(13,17,23,0) 0%, var(--bg) 26%)}
+  padding:4px 0 calc(14px + env(safe-area-inset-bottom));
+  margin-top:2px;
 }
 
 /* ---------- result ---------- */
