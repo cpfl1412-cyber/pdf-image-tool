@@ -268,6 +268,7 @@
         num.textContent = n;
         cell.appendChild(canvas);
         cell.appendChild(num);
+        cell.appendChild(pageSaveButton(n));
         grid.appendChild(cell);
       } catch (e) {
         console.error('page render failed', n, e);
@@ -285,6 +286,34 @@
     }
     setProgress('pdf', 0.99, '미리보기 완료');
     await nextFrame();
+  }
+
+  function pageSaveButton(n) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'page-save';
+    btn.textContent = '↓';
+    btn.title = n + '페이지 저장';
+    btn.setAttribute('aria-label', n + '페이지 이미지로 저장');
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      const before = btn.textContent;
+      btn.textContent = '…';
+      try {
+        const blob = await renderPageBlob(n);
+        const ext = pdfState.format === 'png' ? 'png' : 'jpg';
+        downloadBlob(blob, pdfState.name + '-p' + String(n).padStart(2, '0') + '.' + ext);
+        toast(n + '페이지를 저장했어요.');
+      } catch (e) {
+        console.error(e);
+        toast('저장하지 못했어요. 화면을 새로 고친 뒤 다시 시도해 주세요.');
+      } finally {
+        btn.textContent = before;
+        btn.disabled = false;
+      }
+    });
+    return btn;
   }
 
   function exportScale(page1Viewport) {
@@ -395,9 +424,9 @@
       const pages = await buildAllPages();
       for (const p of pages) {
         downloadBlob(p.blob, p.name);
-        await new Promise(r => setTimeout(r, 320));
+        await new Promise(r => setTimeout(r, 500));
       }
-      toast(pages.length + '장을 저장했어요. 사진 앱·파일 앱에서 확인해 보세요.', 3600);
+      toast(pages.length + '장을 저장하려고 했어요. 브라우저가 한 번에 여러 장을 막으면 미리보기의 ↓로 한 장씩 저장해 주세요.', 4200);
     } catch (err) {
       console.error(err);
       toast('저장하지 못했어요. 화면을 새로 고친 뒤 다시 시도해 주세요.', 3400);

@@ -1,6 +1,6 @@
 /* 오프라인 지원 — 앱 껍데기와 라이브러리를 기기에 캐시합니다.
    업데이트할 때는 CACHE 이름의 버전을 올려 주세요. */
-const CACHE = 'pdf-image-tool-v1';
+const CACHE = 'pdf-image-tool-v2';
 
 const CORE = [
   './',

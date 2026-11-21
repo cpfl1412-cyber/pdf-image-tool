@@ -217,6 +217,17 @@ main{flex:1;padding:14px 14px 8px;max-width:720px;width:100%;margin:0 auto}
   font-size:.7rem;font-weight:700;
   padding:2px 7px;border-radius:999px;
 }
+.page-save{
+  position:absolute;top:6px;right:6px;
+  width:34px;height:34px;border-radius:50%;
+  border:0;background:rgba(16,24,40,.62);color:#fff;
+  font-size:.95rem;font-weight:700;line-height:1;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+}
+.page-save:active{background:var(--brand)}
+.page-save:disabled{opacity:.55}
 
 /* ---------- image thumbnails ---------- */
 
