@@ -1,11 +1,11 @@
 /* 오프라인 지원 — 앱 껍데기와 라이브러리를 기기에 캐시합니다.
    파일을 고칠 때는 index.html의 ?v= 값과 아래 CACHE 버전을 함께 올려 주세요. */
-const CACHE = 'pdf-image-tool-v4';
+const CACHE = 'pdf-image-tool-v5';
 
 const CORE = [
   './',
   './index.html',
-  './styles.css?v=3',
+  './styles.css?v=4',
   './app.js?v=2',
   './manifest.webmanifest',
   './icons/icon-192.png',
