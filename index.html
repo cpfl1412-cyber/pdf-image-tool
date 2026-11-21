@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDF ↔ 이미지 — 폰 안에서 안전하게</title>
+<meta name="description" content="PDF를 페이지별 이미지로 바꾸거나, 사진 여러 장을 PDF 하나로 묶는 도구. 모든 처리는 기기 안에서만 이루어지고 파일은 어디로도 전송되지 않습니다.">
+<meta name="theme-color" content="#1a56db">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; connect-src 'self' blob: data:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; manifest-src 'self'">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="PDF↔이미지">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" href="./icons/icon-192.png" sizes="192x192">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <img class="brand-icon" src="./icons/icon-192.png" alt="" width="40" height="40">
+    <div>
+      <h1>PDF ↔ 이미지</h1>
+      <p class="brand-sub">계약서·신분증도 안심하고</p>
+    </div>
+  </div>
+  <p class="privacy-note">
+    <span class="lock" aria-hidden="true">🔒</span>
+    <span><strong>외부 전송 없이 폰 안에서만</strong> 처리돼요. 인터넷이 끊겨도 그대로 쓸 수 있습니다.</span>
+  </p>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="모드 선택">
+  <button class="tab is-active" id="tab-pdf2img" role="tab" aria-selected="true" aria-controls="panel-pdf2img" data-tab="pdf2img">PDF → 이미지</button>
+  <button class="tab" id="tab-img2pdf" role="tab" aria-selected="false" aria-controls="panel-img2pdf" data-tab="img2pdf">이미지 → PDF</button>
+</nav>
+
+<main>
+  <!-- ============ PDF → 이미지 ============ -->
+  <section class="panel is-active" id="panel-pdf2img" role="tabpanel" aria-labelledby="tab-pdf2img">
+
+    <label class="picker" for="pdfInput" id="pdfPicker">
+      <span class="picker-icon" aria-hidden="true">📄</span>
+      <span class="picker-title">PDF 파일 선택</span>
+      <span class="picker-sub">한 개씩, 페이지마다 이미지로</span>
+    </label>
+    <input id="pdfInput" type="file" accept="application/pdf,.pdf" class="sr-only">
+
+    <div class="card hidden" id="pdfInfo">
+      <div class="file-row">
+        <span class="file-name" id="pdfName">—</span>
+        <button class="btn-ghost" id="pdfReset" type="button">다른 파일</button>
+      </div>
+      <p class="meta" id="pdfMeta">—</p>
+    </div>
+
+    <div class="card hidden" id="pdfOptions">
+      <div class="opt-row">
+        <span class="opt-label">파일 형식</span>
+        <div class="segmented" role="radiogroup" aria-label="파일 형식" id="formatSeg">
+          <button type="button" class="seg is-active" data-value="png" role="radio" aria-checked="true">PNG</button>
+          <button type="button" class="seg" data-value="jpeg" role="radio" aria-checked="false">JPG</button>
+        </div>
+      </div>
+      <div class="opt-row">
+        <span class="opt-label">화질</span>
+        <div class="segmented" role="radiogroup" aria-label="화질" id="qualitySeg">
+          <button type="button" class="seg is-active" data-value="normal" role="radio" aria-checked="true">보통</button>
+          <button type="button" class="seg" data-value="high" role="radio" aria-checked="false">고화질</button>
+        </div>
+      </div>
+      <p class="hint" id="qualityHint">보통 · 약 144dpi — 화면으로 보기 좋아요</p>
+    </div>
+
+    <div class="progress hidden" id="pdfProgress">
+      <div class="progress-bar"><span id="pdfProgressFill"></span></div>
+      <p class="progress-text" id="pdfProgressText">준비 중…</p>
+    </div>
+
+    <div class="section-head hidden" id="pdfPreviewHead">
+      <h2>미리보기</h2>
+      <span class="count" id="pdfPageCount"></span>
+    </div>
+    <div class="page-grid" id="pdfPreview"></div>
+
+    <div class="action-bar hidden" id="pdfActions">
+      <button class="btn btn-primary" id="btnZip" type="button">ZIP으로 한 번에 저장</button>
+      <div class="btn-row">
+        <button class="btn" id="btnShare" type="button">공유</button>
+        <button class="btn" id="btnEach" type="button">개별 저장</button>
+      </div>
+      <p class="hint">아이폰에서는 <strong>공유</strong>나 <strong>ZIP 저장</strong>이 가장 편해요.</p>
+    </div>
+  </section>
+
+  <!-- ============ 이미지 → PDF ============ -->
+  <section class="panel" id="panel-img2pdf" role="tabpanel" aria-labelledby="tab-img2pdf">
+
+    <label class="picker" for="imgInput" id="imgPicker">
+      <span class="picker-icon" aria-hidden="true">🖼️</span>
+      <span class="picker-title">사진 선택</span>
+      <span class="picker-sub">여러 장을 골라 PDF 하나로</span>
+    </label>
+    <input id="imgInput" type="file" accept="image/*" multiple class="sr-only">
+
+    <div class="card hidden" id="imgOptions">
+      <div class="opt-row">
+        <span class="opt-label">페이지 크기</span>
+        <div class="segmented" role="radiogroup" aria-label="페이지 크기" id="fitSeg">
+          <button type="button" class="seg is-active" data-value="a4" role="radio" aria-checked="true">A4 맞춤</button>
+          <button type="button" class="seg" data-value="orig" role="radio" aria-checked="false">원본 크기</button>
+        </div>
+      </div>
+      <p class="hint" id="fitHint">A4 맞춤 · 여백 없이 비율 유지하며 A4 한 장에 담아요</p>
+      <p class="hint">페이지가 이상하면 위(↑) 아래(↓) 버튼으로 순서를 바꾸고, ↻ 로 90°씩 돌릴 수 있어요.</p>
+    </div>
+
+    <div class="section-head hidden" id="imgHead">
+      <h2>페이지 순서</h2>
+      <button class="btn-ghost" id="imgClear" type="button">전체 삭제</button>
+    </div>
+    <ol class="thumb-list" id="imgList"></ol>
+
+    <div class="progress hidden" id="imgProgress">
+      <div class="progress-bar"><span id="imgProgressFill"></span></div>
+      <p class="progress-text" id="imgProgressText">준비 중…</p>
+    </div>
+
+    <div class="action-bar hidden" id="imgActions">
+      <button class="btn btn-primary" id="btnMakePdf" type="button">PDF 하나로 만들기</button>
+    </div>
+
+    <div class="card hidden" id="pdfResult">
+      <div class="file-row">
+        <span class="file-name" id="resultName">—</span>
+        <span class="badge">완성</span>
+      </div>
+      <canvas class="result-preview" id="resultPreview" aria-label="만들어진 PDF 첫 페이지 미리보기"></canvas>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnSavePdf" type="button">저장</button>
+        <button class="btn" id="btnSharePdf" type="button">공유</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <details class="howto">
+    <summary>홈 화면에 앱처럼 추가하기</summary>
+    <ol>
+      <li>Safari 하단의 <strong>공유 버튼</strong>(□↑)을 누릅니다.</li>
+      <li><strong>홈 화면에 추가</strong>를 선택합니다.</li>
+      <li>홈 화면 아이콘으로 열면 주소창 없이 앱처럼 뜨고, 비행기 모드에서도 동작합니다.</li>
+    </ol>
+  </details>
+  <p class="footer-note">파일은 기기 메모리에서만 처리되고 서버로 보내지 않습니다.<br>PDF 처리: PDF.js · PDF 만들기: pdf-lib · 압축: JSZip</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="./vendor/pdf.min.js"></script>
+<script src="./vendor/pdf-lib.min.js"></script>
+<script src="./vendor/jszip.min.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
